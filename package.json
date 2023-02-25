@@ -1,0 +1,11 @@
+{
+  "name": "maven-dependecy-analyser",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@octokit/rest": "^19.0.7",
+    "@ts-graphviz/parser": "^0.6.1",
+    "csv-writer": "^1.6.0",
+    "ts-graphviz": "^1.5.4"
+  }
+}

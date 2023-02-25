@@ -1,0 +1,5 @@
+/out/
+/node_modules/
+/.idea/
+/maven-dependecy-analyser.iml
+/package-lock.json
