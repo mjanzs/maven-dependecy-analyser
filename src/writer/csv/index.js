@@ -1,7 +1,7 @@
-import {createArrayCsvWriter} from "csv-writer";
+import {createObjectCsvWriter} from "csv-writer";
 
 export function write(dirName, header, values) {
-  const csvWriter = createArrayCsvWriter({
+  const csvWriter = createObjectCsvWriter({
     header,
     path: `${dirName}/dependencies.csv`
   });

@@ -45,8 +45,6 @@ const artifacts = (args.values['artifact'] ?? throwError("artifacts cannot be nu
   const github = new Github(apiKey);
 
   let counter = 0;
-  const header = ['repo', 'lang'].concat(artifacts
-    .map(artifact => `${artifact.groupId}:${artifact.artifactId}`))
 
   const values = await (await Promise.all(repos.map(async repo => {
     console.log(`[start] ${repo}`)
@@ -60,11 +58,36 @@ const artifacts = (args.values['artifact'] ?? throwError("artifacts cannot be nu
         .versions(artifacts)
 
     const lang = await repository.resolveLanguage()
-    const result = [`${repo}`, `${lang}`].concat(matchedArtifacts
-      .map(dependency => `${dependency.version ?? ''}`))
+
+    const matchedResults = artifacts.reduce((acc, artifact, i) => {
+      return {
+        ...acc,
+        [`${artifact.groupId}:${artifact.artifactId}`]: `${matchedArtifacts[i].version ?? ''}`
+      }
+    }, {})
+
+    const result = {
+      repo: `${repo}`,
+      lang: `${lang}`,
+      ...matchedResults
+    }
+
     console.log(`[done ${++counter}/${repos.length}] ${repo}`)
     return result;
   })))
+
+  const artifactsHeaders = artifacts
+      .map((artifact) => {
+        const identifier = `${artifact.groupId}:${artifact.artifactId}`
+        return {
+          id: identifier, title: identifier
+        }
+      })
+  const baseHeader = [
+    {id: 'repo', title: 'repo'},
+    {id: 'lang', title: 'lang'}
+  ]
+  const header = baseHeader.concat(artifactsHeaders)
 
   await csv.write(outDir, header, values)
 
