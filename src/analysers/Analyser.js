@@ -8,10 +8,6 @@ export class AnalysisReporter {
   language
 }
 
-export class AnalyserChain {
-  chain // [Analyser]
-}
-
 export class Analyser {
   name
 }

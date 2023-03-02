@@ -1,6 +1,6 @@
 import {Octokit} from "@octokit/rest";
 import * as io from "../../utils/io.js";
-import {supportedLanguages} from "../../analysers/index.js";
+import {supportedLanguages} from "../../analysers/Analyser.js";
 
 export class Github {
   octokit;

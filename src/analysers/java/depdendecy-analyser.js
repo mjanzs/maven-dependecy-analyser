@@ -1,9 +1,7 @@
-import {Analyser, AnalyserChain} from '../index.js'
-import {AnalyserResult} from "../result/AnalyserResult.js";
-import {MultiAnalyserResult} from "../result/MultiAnalyserResult.js";
-import {SingleAnalyserResult} from "../result/SingleAnalyserResult.js";
+import {Analyser} from '../Analyser.js'
+import {AnalyserResult,MultiAnalyserResult,SingleAnalyserResult} from "../AnalyserResult.js";
 
-export class DependencyAnalyser extends AnalyserChain {
+export class DependencyAnalyser extends Analyser {
   dependencies
 
   constructor(dependencies) {
