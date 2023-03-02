@@ -54,26 +54,21 @@ const artifacts = (args.values['artifact'] ?? throwError("artifacts cannot be nu
     const dependencies = new Maven()
         .execMvnTree(pom, repo, outDir)
         .getDependencies()
-    const matchedArtifacts = new JavaDependencyAnalyser(dependencies)
-        .versions(artifacts)
+    const matchedResults = new JavaDependencyAnalyser(dependencies)
+        .scanForVersions(artifacts)
 
     const lang = await repository.resolveLanguage()
 
-    const matchedResults = artifacts.reduce((acc, artifact, i) => {
-      return {
-        ...acc,
-        [`${artifact.groupId}:${artifact.artifactId}`]: `${matchedArtifacts[i].version ?? ''}`
-      }
-    }, {})
-
-    const result = {
+    const metadata = {
       repo: `${repo}`,
-      lang: `${lang}`,
-      ...matchedResults
+      lang: `${lang}`
     }
 
     console.log(`[done ${++counter}/${repos.length}] ${repo}`)
-    return result;
+    return {
+      ...metadata,
+      ...matchedResults
+    };
   })))
 
   const artifactsHeaders = artifacts

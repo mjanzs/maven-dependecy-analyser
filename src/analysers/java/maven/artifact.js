@@ -6,11 +6,11 @@ export class Artifact {
     scope
 
     constructor(groupId, artifactId, type, version, scope) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.type = type;
-        this.version = version;
-        this.scope = scope;
+        this.groupId = groupId.trim();
+        this.artifactId = artifactId.trim();
+        this.type = type?.trim();
+        this.version = version?.trim();
+        this.scope = scope?.trim();
     }
 
     static parseDependencyString(str) {
@@ -34,5 +34,9 @@ export class Artifact {
             .filter(([_, value]) => !!value)
             .map(([key, _]) => key)
             .reduce((result, key) => result && this[key] === other[key], true)
+    }
+
+    identifier() {
+        return `${this.groupId}:${this.artifactId}`
     }
 }
