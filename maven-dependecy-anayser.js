@@ -7,6 +7,7 @@ import {Maven} from "./src/analysers/java/maven/index.js";
 import {Github} from "./src/repo/github/index.js";
 import {Artifact} from "./src/analysers/java/maven/artifact.js";
 import {DependencyAnalyser as JavaDependencyAnalyser} from "./src/analysers/java/depdendecy-analyser.js";
+import {MultiAnalyserResult, SingleAnalyserResult} from "./src/analysers/AnalyserResult.js";
 
 const options = {
   'api-key': {
@@ -46,7 +47,7 @@ const artifacts = (args.values['artifact'] ?? throwError("artifacts cannot be nu
 
   let counter = 0;
 
-  const values = await (await Promise.all(repos.map(async repo => {
+  const result = await (await Promise.all(repos.map(async repo => {
     console.log(`[start] ${repo}`)
     const repository = github.repo(org, repo)
     const pom = await repository.downloadRootPom(outDir)
@@ -59,32 +60,20 @@ const artifacts = (args.values['artifact'] ?? throwError("artifacts cannot be nu
 
     const lang = await repository.resolveLanguage()
 
-    const metadata = {
-      repo: `${repo}`,
-      lang: `${lang}`
-    }
+    const repoResult = new SingleAnalyserResult('repo', 'repo', `${repo}`)
+    const langResult = new SingleAnalyserResult('lang', 'lang', `${lang}`)
 
     console.log(`[done ${++counter}/${repos.length}] ${repo}`)
-    return {
-      ...metadata,
-      ...matchedResults.asMap()
-    };
+    return new MultiAnalyserResult([
+      repoResult,
+      langResult,
+      ...matchedResults
+    ]);
   })))
 
-  const artifactsHeaders = artifacts
-      .map((artifact) => {
-        const identifier = `${artifact.groupId}:${artifact.artifactId}`
-        return {
-          id: identifier, title: identifier
-        }
-      })
-  const baseHeader = [
-    {id: 'repo', title: 'repo'},
-    {id: 'lang', title: 'lang'}
-  ]
-  const header = baseHeader.concat(artifactsHeaders)
-
-  await csv.write(outDir, header, values)
+  const headers = result.flatMap(r => r.headers());
+  const values = result.map(r => r.values());
+  await csv.write(outDir, headers, values)
 
   console.log();
 })()

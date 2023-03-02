@@ -10,15 +10,16 @@ export class DependencyAnalyser extends Analyser {
   }
 
   scanForVersions(artifacts) {
-      return new MultiAnalyserResult(artifacts
-          .map(artifact => {
-            const match = this.dependencies
-                .find(value => artifact.matching(value))
-            if (match) {
-                return new SingleAnalyserResult(artifact.identifier(), match.version)
-            } else {
-              return AnalyserResult.empty();
-            }
-          }))
+      const results = artifacts.map(artifact => {
+          const match = this.dependencies
+              .find(value => artifact.matching(value))
+          const identifier = artifact.identifier()
+          if (match) {
+              return new SingleAnalyserResult(identifier, identifier, match.version)
+          } else {
+              return AnalyserResult.empty(identifier, identifier);
+          }
+      });
+      return new MultiAnalyserResult(results)
   }
 }
