@@ -1,5 +1,7 @@
 import {Analyser, AnalyserChain} from '../index.js'
-import {AnalyserResult} from "../AnalyserResult.js";
+import {AnalyserResult} from "../result/AnalyserResult.js";
+import {MultiAnalyserResult} from "../result/MultiAnalyserResult.js";
+import {SingleAnalyserResult} from "../result/SingleAnalyserResult.js";
 
 export class DependencyAnalyser extends AnalyserChain {
   dependencies
@@ -10,21 +12,15 @@ export class DependencyAnalyser extends AnalyserChain {
   }
 
   scanForVersions(artifacts) {
-      return artifacts
+      return new MultiAnalyserResult(artifacts
           .map(artifact => {
             const match = this.dependencies
                 .find(value => artifact.matching(value))
             if (match) {
-                return new AnalyserResult(artifact.identifier(), match.version)
+                return new SingleAnalyserResult(artifact.identifier(), match.version)
             } else {
               return AnalyserResult.empty();
             }
-          })
-          .reduce((acc, result, i) => {
-              return {
-                  ...acc,
-                  ...result.asMap()
-              }
-          }, {})
+          }))
   }
 }

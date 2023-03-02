@@ -67,7 +67,7 @@ const artifacts = (args.values['artifact'] ?? throwError("artifacts cannot be nu
     console.log(`[done ${++counter}/${repos.length}] ${repo}`)
     return {
       ...metadata,
-      ...matchedResults
+      ...matchedResults.asMap()
     };
   })))
 

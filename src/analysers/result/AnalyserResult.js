@@ -1,11 +1,4 @@
 export class AnalyserResult {
-    key
-    value
-
-    constructor(key, value) {
-        this.key = key
-        this.value = value
-    }
 
     static empty() {
         return new class EmptyResult extends AnalyserResult {
@@ -16,9 +9,7 @@ export class AnalyserResult {
     }
 
     asMap() {
-        return {
-            [this.key]: this.value
-        }
+        throw new Error()
     }
 
 }
