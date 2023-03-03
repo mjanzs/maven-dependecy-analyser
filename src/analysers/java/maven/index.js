@@ -10,7 +10,12 @@ export class Maven {
 
   execMvnTree(pom, repo, outputDir) {
     const dependencyFile = "dependencies.dot";
-    execSync(`mvn -f ${pom} dependency:tree -DoutputType=dot -DoutputFile=${dependencyFile}`)
+    try {
+      execSync(`mvn -f ${pom} dependency:tree -DoutputType=dot -DoutputFile=${dependencyFile}`)
+    } catch (e) {
+      console.warn(e.stdout.toString())
+      throw new Error(e.message);
+    }
     return new Tree(this.#parseDependencyFile(
         dir(`${outputDir}/${repo}`) + "/" + "dependencies.dot"))
   }

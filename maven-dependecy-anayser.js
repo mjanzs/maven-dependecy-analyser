@@ -47,7 +47,7 @@ const artifacts = (args.values['artifact'] ?? throwError("artifacts cannot be nu
 
   let counter = 0;
 
-  const result = await (await Promise.all(repos.map(async repo => {
+  const results = await (await Promise.all(repos.map(async repo => {
     console.log(`[start] ${repo}`)
     const repository = github.repo(org, repo)
     const pom = await repository.downloadRootPom(outDir)
@@ -60,19 +60,27 @@ const artifacts = (args.values['artifact'] ?? throwError("artifacts cannot be nu
 
     const lang = await repository.resolveLanguage()
 
-    const repoResult = new SingleAnalyserResult('repo', 'repo', `${repo}`)
-    const langResult = new SingleAnalyserResult('lang', 'lang', `${lang}`)
+    const repoResult = new SingleAnalyserResult('repo', `${repo}`)
+    const langResult = new SingleAnalyserResult('lang', `${lang}`)
 
     console.log(`[done ${++counter}/${repos.length}] ${repo}`)
     return new MultiAnalyserResult([
-      repoResult,
-      langResult,
-      ...matchedResults
-    ]);
+          repoResult.scan,
+          langResult.scan,
+          ...matchedResults.scans
+        ], [
+          repoResult,
+          langResult,
+          ...matchedResults
+        ]);
   })))
 
-  const headers = result.flatMap(r => r.headers());
-  const values = result.map(r => r.values());
+  function first() {
+    return () => true;
+  }
+
+  const headers = results.map(r => r.headers()).find(first());
+  const values = results.map(r => r.values());
   await csv.write(outDir, headers, values)
 
   console.log();

@@ -1,17 +1,7 @@
 export class AnalyserResult {
 
-    static empty(title, key) {
-        return new class EmptyResult extends AnalyserResult {
-            values() {
-                return {}
-            }
-
-            headers() {
-                return {
-                    id: key, title: title
-                }
-            }
-        }
+    static empty(scan) {
+        return new EmptyResult(scan)
     }
 
     values() {
@@ -24,10 +14,12 @@ export class AnalyserResult {
 }
 
 export class MultiAnalyserResult extends AnalyserResult {
+    scans
     results
 
-    constructor(results) {
+    constructor(scans, results) {
         super()
+        this.scans = scans
         this.results = results
     }
 
@@ -41,8 +33,10 @@ export class MultiAnalyserResult extends AnalyserResult {
     }
 
     headers() {
-        return this.results.map((r) => {
-            return r.headers()
+        return this.scans.map(scan => {
+            return {
+                id: scan, title: scan
+            }
         })
     }
 
@@ -52,30 +46,51 @@ export class MultiAnalyserResult extends AnalyserResult {
         }
     }
 
+    static fromSingleResults(results) {
+        const map = results.reduce((acc, r) => {
+            acc[r.scan] = r
+            return acc
+        }, {});
+        return new MultiAnalyserResult(Object.keys(map), Object.values(map))
+    }
 }
 
 export class SingleAnalyserResult extends AnalyserResult {
-    title
-    key
+    scan
     value
 
-    constructor(title, key, value) {
+    constructor(scan, value) {
         super()
-        this.title = title
-        this.key = key
+        this.scan = scan
         this.value = value
     }
 
     values() {
         return {
-            [this.key]: this.value
+            [this.scan]: this.value
         }
     }
 
     headers() {
         return {
-            id: this.key, title: this.title
+            id: this.scan, title: this.title
         }
     }
 
+}
+
+class EmptyResult extends AnalyserResult {
+    constructor(scan) {
+        super()
+        this.scan = scan
+    }
+    values() {
+        return {}
+    }
+
+    headers() {
+        return {
+            id: this.scan, title: this.scan
+        }
+    }
 }

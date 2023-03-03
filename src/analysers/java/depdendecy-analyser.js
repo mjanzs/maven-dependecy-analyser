@@ -15,11 +15,11 @@ export class DependencyAnalyser extends Analyser {
               .find(value => artifact.matching(value))
           const identifier = artifact.identifier()
           if (match) {
-              return new SingleAnalyserResult(identifier, identifier, match.version)
+              return new SingleAnalyserResult(identifier, match.version)
           } else {
-              return AnalyserResult.empty(identifier, identifier);
+              return AnalyserResult.empty(identifier);
           }
       });
-      return new MultiAnalyserResult(results)
+      return MultiAnalyserResult.fromSingleResults(results)
   }
 }
