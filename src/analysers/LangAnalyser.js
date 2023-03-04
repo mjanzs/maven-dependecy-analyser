@@ -11,7 +11,7 @@ export class LangAnalyser extends Analyser {
   }
 
   async scan(definition) {
-    const lang = this.repository.resolveLanguage()
+    const lang = await this.repository.resolveLanguage()
     return new SingleAnalyserResult(definition.type, lang)
   }
 }

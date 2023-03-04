@@ -50,10 +50,11 @@ let counter = 0;
         const allResults = (await Promise.all(definition.analysers.flatMap(async analyserDefinition => {
             switch (analyserDefinition.type) {
               case "lang":
-                return (await new LangAnalyser(repository).scan(analyserDefinition));
+                return new LangAnalyser(repository).scan(analyserDefinition)
               case "dependency-version":
                 const analyser = await JavaDependencyAnalyser.repositoryAnalyser(repository, outDir);
-                return analyser.scan(analyserDefinition).results
+                const scan = await analyser.scan(analyserDefinition)
+                return scan.results
             }
           }))).flatMap(i => i)
 
@@ -78,39 +79,3 @@ let counter = 0;
     await csv.write(outDir, headers, values)
   })
 })()
-
-
-async function x() {
-
-
-  const results = await (await Promise.all(repos.map(async repo => {
-    console.log(`[start] ${repo}`)
-    const repository = github.repo(org, repo)
-
-    const lang = await repository.resolveLanguage()
-
-    const repoResult = new SingleAnalyserResult('repo', `${repo}`)
-    const langResult = new SingleAnalyserResult('lang', `${lang}`)
-
-    console.log(`[done ${++counter}/${repos.length}] ${repo}`)
-    return new MultiAnalyserResult([
-          repoResult.scan,
-          langResult.scan,
-          ...matchedResults.scans
-        ], [
-          repoResult,
-          langResult,
-          ...matchedResults
-        ]);
-  })))
-
-  function first() {
-    return () => true;
-  }
-
-  const headers = results.map(r => r.headers()).find(first());
-  const values = results.map(r => r.values());
-  await csv.write(outDir, headers, values)
-
-  console.log();
-}

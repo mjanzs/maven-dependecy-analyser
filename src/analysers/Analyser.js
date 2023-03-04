@@ -11,7 +11,7 @@ export class AnalysisReporter {
 export class Analyser {
   name
 
-  scan(definition) {
+  async scan(definition) {
     throw new Error()
   }
 }

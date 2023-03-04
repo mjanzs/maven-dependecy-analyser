@@ -21,7 +21,7 @@ export class DependencyAnalyser extends Analyser {
     return new DependencyAnalyser(dependencies)
   }
 
-  scan(definition) {
+  async scan(definition) {
     return this.scanForVersions(definition.dependencies.map(value => Artifact.parseDependencyString(value)))
   }
 
