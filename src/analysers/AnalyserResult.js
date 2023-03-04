@@ -40,11 +40,11 @@ export class MultiAnalyserResult extends AnalyserResult {
         })
     }
 
-    *[Symbol.iterator]() {
-        for (let r of this.results) {
-            yield r;
-        }
-    }
+    // *[Symbol.iterator]() {
+    //     for (let r of this.results) {
+    //         yield r;
+    //     }
+    // }
 
     static fromSingleResults(results) {
         const map = results.reduce((acc, r) => {

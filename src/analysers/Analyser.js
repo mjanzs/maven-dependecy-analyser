@@ -10,4 +10,8 @@ export class AnalysisReporter {
 
 export class Analyser {
   name
+
+  scan(definition) {
+    throw new Error()
+  }
 }

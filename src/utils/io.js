@@ -21,3 +21,7 @@ export function downloadFile(downloadUrl, fileName) {
     })
   })
 }
+
+export function readJsonFile(location) {
+  return JSON.parse(fs.readFileSync(location));
+}
