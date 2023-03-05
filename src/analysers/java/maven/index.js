@@ -1,8 +1,8 @@
 import {throwError} from "../../../utils/index.js";
 import {dir} from "../../../utils/io.js";
 
-import {execSync} from "child_process";
-import fs from "fs";
+import {execSync} from "node:child_process";
+import fs from "node:fs";
 import * as graphvizParse from "ts-graphviz/ast";
 import { Artifact } from "./artifact.js";
 

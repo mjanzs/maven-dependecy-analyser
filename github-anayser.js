@@ -1,32 +1,32 @@
 #!/usr/bin/env node
 
-import {parseArgs} from 'node:util';
+import commandLineArgs from 'command-line-args';
 import {throwError} from "./src/utils/index.js";
 import * as csv from "./src/writer/csv/index.js";
 import {Definition} from "./src/definition/index.js";
 import * as io from "./src/utils/io.js";
 import {GithubAnalysis} from "./src/analysers/Analysis.js";
 
-const options = {
-  'api-key': {
-    type: 'string',
+const optionDefinitions = [
+  {
+    name: 'api-key',
+    type: String
   },
-  'definition': {
-    type: 'string',
+  {
+    name: 'definition',
+    type: String
   },
-  'dir': {
-    type: 'string',
-  },
-};
+  {
+    name: 'dir',
+    type: String
+  }
+]
 
-const args = parseArgs({
-  options,
-  args: process.argv.slice(2)
-})
+const options = commandLineArgs(optionDefinitions)
 
-const outDir = args.values['dir'] ?? throwError("dir cannot be null")
-const apiKey = args.values['api-key'] ?? throwError("api-key cannot be null")
-const definitions = (args.values['definition'] ?? throwError("definition cannot be null"))
+const outDir = options['dir'] ?? throwError("dir cannot be null")
+const apiKey = options['api-key'] ?? throwError("api-key cannot be null")
+const definitions = (options['definition'] ?? throwError("definition cannot be null"))
   .split(",")
 
 await (async function() {

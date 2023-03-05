@@ -1,5 +1,5 @@
-import fs from "fs";
-import https from "https";
+import fs from "node:fs"
+import https from "node:https"
 
 export function dir(dirName) {
   if (!fs.existsSync(dirName)){

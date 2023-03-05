@@ -2,18 +2,15 @@
   "name": "maven-dependecy-analyser",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-
-  },
+  "scripts": {},
   "dependencies": {
     "@octokit/rest": "^19.0.7",
     "@ts-graphviz/parser": "^0.6.1",
+    "command-line-args": "^5.2.1",
     "csv-writer": "^1.6.0",
     "ts-graphviz": "^1.5.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.21.0",
-    "@babel/core": "^7.21.0",
     "typescript": "^4.9.5"
   }
 }
