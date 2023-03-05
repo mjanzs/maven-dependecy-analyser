@@ -17,6 +17,7 @@ export class Github {
 }
 
 export class Repository {
+  static pom = 'pom.xml'
 
   github
   owner

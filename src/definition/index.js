@@ -25,6 +25,7 @@ export class Definition {
   org
   repos
   analysers
+  transpose = false
 
   constructor(map) {
     for (let [key, value] of Object.entries(map)) {

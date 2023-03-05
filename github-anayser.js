@@ -40,6 +40,11 @@ await (async function() {
     const headers = results.map(r => r.headers())
       .reduce((a, b) => (a.toString() === b.toString()) ? a : throwError("incorrect headers"))
     const values = results.map(r => r.values());
-    await csv.write(outDir, headers, values)
+
+    if (definition.transpose) {
+      await csv.writeTransposed(outDir, headers, values)
+    } else {
+      await csv.write(outDir, headers, values)
+    }
   })
 })()
