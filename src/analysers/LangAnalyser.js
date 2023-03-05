@@ -6,7 +6,7 @@ export class LangAnalyser extends Analyser {
   repository
 
   constructor(repository) {
-    super()
+    super('lang')
     this.repository = repository
   }
 

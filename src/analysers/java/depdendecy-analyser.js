@@ -4,30 +4,31 @@ import {Maven} from "./maven/index.js";
 import {Artifact} from "./maven/artifact.js";
 
 export class DependencyAnalyser extends Analyser {
-  dependencies
+  repository
+  out
 
-  constructor(dependencies) {
-    super();
-    this.dependencies = dependencies
-  }
-
-  // todo
-  static async repositoryAnalyser(repository, out) {
-    const pom = await repository.downloadRootPom(out)
-
-    const dependencies = new Maven()
-      .execMvnTree(pom, repository.repo, out)
-      .getDependencies()
-    return new DependencyAnalyser(dependencies)
+  constructor(repository, out) {
+    super('dependency-version');
+    this.repository = repository
+    this.out = out
   }
 
   async scan(definition) {
-    return this.scanForVersions(definition.dependencies.map(value => Artifact.parseDependencyString(value)))
+    const pom = await this.repository.downloadRootPom(this.out)
+
+    const dependencies = new Maven()
+      .execMvnTree(pom, this.repository.repo, this.out)
+      .getDependencies()
+
+    const artifacts = definition.dependencies
+      .map(value => Artifact.parseDependencyString(value));
+
+    return this.scanForVersions(artifacts, dependencies)
   }
 
-  scanForVersions(artifacts) {
+  scanForVersions(artifacts, dependencies) {
       const results = artifacts.map(artifact => {
-          const match = this.dependencies
+          const match = dependencies
               .find(value => artifact.matching(value))
           const identifier = artifact.identifier()
           if (match) {

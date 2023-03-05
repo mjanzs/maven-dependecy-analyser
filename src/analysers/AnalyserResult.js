@@ -23,6 +23,22 @@ export class MultiAnalyserResult extends AnalyserResult {
         this.results = results
     }
 
+    static reducer() {
+        return (acc, item) => {
+            const result = acc || new MultiAnalyserResult([], [])
+            switch (true) {
+                case item instanceof SingleAnalyserResult:
+                    return new MultiAnalyserResult(
+                      [...result.scans, item.scan],
+                      [...result.results, item])
+                case item instanceof MultiAnalyserResult:
+                    return new MultiAnalyserResult(
+                      [...result.scans, ...item.scans],
+                      [...result.results, ...item.results])
+            }
+        }
+    }
+
     values() {
         return this.results.reduce((acc, result) => {
             return {
@@ -57,17 +73,17 @@ export class MultiAnalyserResult extends AnalyserResult {
 
 export class SingleAnalyserResult extends AnalyserResult {
     scan
-    value
+    result
 
-    constructor(scan, value) {
+    constructor(scan, result) {
         super()
         this.scan = scan
-        this.value = value
+        this.result = result
     }
 
     values() {
         return {
-            [this.scan]: this.value
+            [this.scan]: this.result
         }
     }
 
@@ -84,6 +100,7 @@ class EmptyResult extends AnalyserResult {
         super()
         this.scan = scan
     }
+
     values() {
         return {}
     }

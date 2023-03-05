@@ -11,6 +11,9 @@ export class AnalysisReporter {
 export class Analyser {
   name
 
+  constructor(name) {
+    this.name = name;
+  }
   async scan(definition) {
     throw new Error()
   }
