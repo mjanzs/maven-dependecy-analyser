@@ -45,12 +45,14 @@ class AnalyserDefinition {
 
   static from(definition) {
     switch (definition.type) {
-      case "lang":
+      case "include-lang":
         return new LangAnalyserDefinition(definition)
       case "dependency-version":
         return new DependencyVersionAnalyserDefinition(definition)
       case "dependabot":
         return new DependabotAnalyserDefinition(definition)
+      case "include-topics":
+        return new TopicsAnalyserDefinition(definition)
       default:
         throw new Error(definition.type)
     }
@@ -65,7 +67,7 @@ class LangAnalyserDefinition extends AnalyserDefinition {
 }
 
 class DependencyVersionAnalyserDefinition extends AnalyserDefinition {
-  dependencies
+  dependencies = []
 
   constructor(map) {
     super()
@@ -74,6 +76,15 @@ class DependencyVersionAnalyserDefinition extends AnalyserDefinition {
 }
 
 class DependabotAnalyserDefinition extends AnalyserDefinition {
+
+  constructor(map) {
+    super()
+    init(this, map);
+  }
+}
+
+class TopicsAnalyserDefinition extends AnalyserDefinition {
+  topics = []
 
   constructor(map) {
     super()

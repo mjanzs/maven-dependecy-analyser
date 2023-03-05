@@ -10,7 +10,8 @@ export class DependabotAnalyser extends Analyser {
   }
 
   async scan(definition) {
-    const securityAlerts = await this.repository.securityAlerts()
+    const securityAlerts = await this.repository.dependabotRequests()
+      .securityAlerts()
     const results = securityAlerts
       .map(alert => new SingleAnalyserResult(alert.dependency, alert.cve))
     return MultiAnalyserResult.fromSingleResults(results)

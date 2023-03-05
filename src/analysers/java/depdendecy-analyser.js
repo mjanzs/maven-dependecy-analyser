@@ -14,7 +14,8 @@ export class DependencyAnalyser extends Analyser {
   }
 
   async scan(definition) {
-    const pom = await this.repository.downloadRootPom(this.out)
+    const requests = this.repository.mavenRepoRequests()
+    const pom = await requests.downloadRootPom(this.out)
 
     const dependencies = new Maven()
       .execMvnTree(pom, this.repository.repo, this.out)

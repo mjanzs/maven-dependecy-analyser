@@ -3,6 +3,7 @@ import {LangAnalyser} from "./LangAnalyser.js";
 import {DependencyAnalyser as JavaDependencyAnalyser} from "./java/depdendecy-analyser.js";
 import {MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult.js";
 import {DependabotAnalyser} from "./DependabotAnalyser.js";
+import {TopicsAnalyser} from "./TopicsAnalyser.js";
 
 export class GithubAnalysis {
   github
@@ -36,7 +37,8 @@ export class GithubAnalysis {
 
   async #executeAnalyser(repository, analyserDefinition, outDir) {
     const analyser = ({
-      "lang": new LangAnalyser(repository),
+      "include-lang": new LangAnalyser(repository),
+      "include-topics": new TopicsAnalyser(repository),
       "dependency-version": new JavaDependencyAnalyser(repository, outDir),
       "dependabot": new DependabotAnalyser(repository)
     })[analyserDefinition.type]
