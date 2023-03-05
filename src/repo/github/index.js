@@ -16,8 +16,7 @@ export class Github {
   }
 }
 
-class Repository {
-  static pom = "pom.xml";
+export class Repository {
 
   github
   owner
@@ -66,5 +65,23 @@ class Repository {
     return Object.fromEntries(
         Object.entries(response.data)
             .map(([k, v], i) => [k, v / total]))
+  }
+
+  async securityAlerts() {
+    const repo = this.repo
+    const owner = this.owner
+    const response = await this.github.octokit.request(`GET /repos/${owner}/${repo}/dependabot/alerts`, {
+      owner,
+      repo,
+      per_page: 100
+    })
+    return response.data.map((item) => {
+      const cve = item.security_advisory.cve_id
+      const dependency = item.security_vulnerability.package.name
+      return {
+        cve,
+        dependency
+      }
+    })
   }
 }

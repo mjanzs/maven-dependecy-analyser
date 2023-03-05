@@ -14,4 +14,8 @@ export class LangAnalyser extends Analyser {
     const lang = await this.repository.resolveLanguage()
     return new SingleAnalyserResult(definition.type, lang)
   }
+
+  client() {
+    return this.repository.github
+  }
 }

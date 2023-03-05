@@ -1,3 +1,5 @@
+import {AnalyserResult} from "./AnalyserResult.js";
+
 export const supportedLanguages = [
   'Java',
   'Go'

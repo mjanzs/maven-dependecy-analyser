@@ -2,6 +2,7 @@ import {Github} from "../repo/github/index.js";
 import {LangAnalyser} from "./LangAnalyser.js";
 import {DependencyAnalyser as JavaDependencyAnalyser} from "./java/depdendecy-analyser.js";
 import {MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult.js";
+import {DependabotAnalyser} from "./DependabotAnalyser.js";
 
 export class GithubAnalysis {
   github
@@ -36,7 +37,8 @@ export class GithubAnalysis {
   async #executeAnalyser(repository, analyserDefinition, outDir) {
     const analyser = ({
       "lang": new LangAnalyser(repository),
-      "dependency-version": new JavaDependencyAnalyser(repository, outDir)
+      "dependency-version": new JavaDependencyAnalyser(repository, outDir),
+      "dependabot": new DependabotAnalyser(repository)
     })[analyserDefinition.type]
 
     return analyser.scan(analyserDefinition)

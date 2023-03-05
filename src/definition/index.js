@@ -21,7 +21,7 @@
 }
  */
 
-export default class Definition {
+export class Definition {
   org
   repos
   analysers
@@ -48,6 +48,8 @@ class AnalyserDefinition {
         return new LangAnalyserDefinition(definition)
       case "dependency-version":
         return new DependencyVersionAnalyserDefinition(definition)
+      case "dependabot":
+        return new DependabotAnalyserDefinition(definition)
       default:
         throw new Error(definition.type)
     }
@@ -63,6 +65,14 @@ class LangAnalyserDefinition extends AnalyserDefinition {
 
 class DependencyVersionAnalyserDefinition extends AnalyserDefinition {
   dependencies
+
+  constructor(map) {
+    super()
+    init(this, map);
+  }
+}
+
+class DependabotAnalyserDefinition extends AnalyserDefinition {
 
   constructor(map) {
     super()
