@@ -59,7 +59,7 @@ class RepoRequests {
     const sorted = Object.entries(languages)
       .sort(([_, a], [__, b]) => a > b)
     const [top, _] = sorted
-      .find(([key, value]) => supportedLanguages.indexOf(key) >= 0) ?? top[0]
+      .find(([key, value]) => supportedLanguages.indexOf(key) >= 0) ?? sorted[0] ?? ""
     return top
   }
 
@@ -129,18 +129,31 @@ class DependabotRequests {
     const repo = this.repo
     const owner = this.owner
 
-    const response = await this.github.octokit.rest.dependabot.listAlertsForRepo({
-      owner,
-      repo,
-      per_page: 100
-    })
-    return response.data.map((item) => {
-      const cve = item.security_advisory.cve_id
-      const dependency = item.security_vulnerability.package.name
-      return {
-        cve,
-        dependency
+    try {
+      const response = await this.github.octokit.rest.dependabot.listAlertsForRepo({
+        owner,
+        repo,
+        per_page: 100
+      })
+      return response.data
+        .filter((item) => item.state === 'open')
+        .map((item) => {
+          const cve = item.security_advisory.cve_id
+          const dependency = item.security_vulnerability.package.name
+          return {
+            cve,
+            dependency
+          }
+        })
+    } catch (e) {
+      switch (e.message) {
+        case 'Dependabot alerts are not available for archived repositories.':
+        case 'Dependabot alerts are disabled for this repository.':
+          break
+        default:
+          console.warn(e)
       }
-    })
+      return []
+    }
   }
 }

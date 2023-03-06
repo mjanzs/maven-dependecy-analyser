@@ -37,8 +37,13 @@ await (async function() {
     const results = await new GithubAnalysis(apiKey)
       .execute(definition, outDir)
 
-    const headers = results.map(r => r.headers())
-      .reduce((a, b) => (a.toString() === b.toString()) ? a : throwError("incorrect headers"))
+    const headers = Object.values(results.map(r => r.headers())
+      .reduce((acc, value) => {
+        value.forEach((item) => {
+          acc[item.id] = item;
+        })
+        return acc
+      }, {}))
     const values = results.map(r => r.values());
 
     if (definition.transpose) {
