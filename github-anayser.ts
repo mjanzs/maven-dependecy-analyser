@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+// @ts-nocheck
 
 import commandLineArgs from 'command-line-args';
 import {throwError} from "./src/utils/index.js";
@@ -24,9 +24,9 @@ const optionDefinitions = [
 
 const options = commandLineArgs(optionDefinitions)
 
-const outDir = options['dir'] ?? throwError("dir cannot be null")
-const apiKey = options['api-key'] ?? throwError("api-key cannot be null")
-const definitions = (options['definition'] ?? throwError("definition cannot be null"))
+const outDir: string = options['dir'] ?? throwError("dir cannot be null")
+const apiKey: string = options['api-key'] ?? throwError("api-key cannot be null")
+const definitions: string = (options['definition'] ?? throwError("definition cannot be null"))
   .split(",")
 
 await (async function() {
