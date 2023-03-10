@@ -1,6 +1,6 @@
-import {Analyser} from "./Analyser.js";
-import {SingleAnalyserResult} from "./AnalyserResult.js";
-import {Repository} from "../repo/github/index.js";
+import {Analyser} from "./Analyser";
+import {SingleAnalyserResult} from "./AnalyserResult";
+import {Repository} from "../repo/github";
 
 export class TopicsAnalyser extends Analyser {
   repository: Repository

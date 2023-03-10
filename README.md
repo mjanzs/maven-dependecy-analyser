@@ -1,5 +1,5 @@
 # maven-dependecy-analyser
 
 ```
-node --loader ts-node/esm
+node --loader ts-node/esm --experimental-specifier-resolution=node
 ```

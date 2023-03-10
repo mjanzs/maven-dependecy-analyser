@@ -1,5 +1,5 @@
-import {Analyser} from "./Analyser.js";
-import {MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult.js";
+import {Analyser} from "./Analyser";
+import {MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult";
 
 export class DependabotAnalyser extends Analyser {
   repository

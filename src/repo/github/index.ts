@@ -1,6 +1,6 @@
 import {Octokit} from "@octokit/rest";
-import * as io from "../../utils/io.js";
-import {supportedLanguages} from "../../analysers/Analyser.js";
+import * as io from "../../utils/io";
+import {supportedLanguages} from "../../analysers/Analyser";
 
 export class Github {
   octokit: Octokit;
@@ -59,7 +59,7 @@ class RepoRequests {
     const sorted = Object.entries(languages)
       .sort(([_, a], [__, b]) => a - b)
     const [top, _] = sorted
-      .find(([key, value]) => supportedLanguages.indexOf(key) >= 0) ?? "n/a"
+      .find(([key, value]) => supportedLanguages.indexOf(key) >= 0) ?? ["n/a", 0]
     return top as string
   }
 

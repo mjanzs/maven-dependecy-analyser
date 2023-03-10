@@ -35,6 +35,8 @@ export class MultiAnalyserResult extends AnalyserResult {
                     return new MultiAnalyserResult(
                       [...result.scans, ...item.scans],
                       [...result.results, ...item.results])
+                default:
+                    throw new Error();
             }
         }
     }

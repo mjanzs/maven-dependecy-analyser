@@ -1,11 +1,11 @@
-import {Github} from "../repo/github/index.js";
-import {LangAnalyser} from "./LangAnalyser.js";
-import {DependencyAnalyser as JavaDependencyAnalyser} from "./java/depdendecy-analyser.js";
-import {MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult.js";
-import {DependabotAnalyser} from "./DependabotAnalyser.js";
-import {TopicsAnalyser} from "./TopicsAnalyser.js";
-import {AnalyserDefinition, Definition} from "../definition/index.js";
-import {Analyser} from "./Analyser.js";
+import {Github} from "../repo/github";
+import {LangAnalyser} from "./LangAnalyser";
+import {DependencyAnalyser as JavaDependencyAnalyser} from "./java/depdendecy-analyser";
+import {MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult";
+import {DependabotAnalyser} from "./DependabotAnalyser";
+import {TopicsAnalyser} from "./TopicsAnalyser";
+import {AnalyserDefinition, Definition} from "../definition";
+import {Analyser} from "./Analyser";
 
 export class GithubAnalysis {
   github: Github

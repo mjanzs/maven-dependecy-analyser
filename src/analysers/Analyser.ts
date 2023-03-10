@@ -1,4 +1,4 @@
-import {AnalyserResult} from "./AnalyserResult.js";
+import {AnalyserResult} from "./AnalyserResult";
 
 export const supportedLanguages = [
   'Java',

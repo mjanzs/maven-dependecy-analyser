@@ -1,8 +1,8 @@
-import {Analyser} from '../Analyser.js'
-import {AnalyserResult,MultiAnalyserResult,SingleAnalyserResult} from "../AnalyserResult.js";
-import {Maven} from "./maven/index.js";
-import {Artifact} from "./maven/artifact.js";
-import {Repository} from "../../repo/github/index.js";
+import {Analyser} from '../Analyser'
+import {AnalyserResult,MultiAnalyserResult,SingleAnalyserResult} from "../AnalyserResult";
+import {Maven} from "./maven";
+import {Artifact} from "./maven/artifact";
+import {Repository} from "../../repo/github";
 
 export class DependencyAnalyser extends Analyser {
   repository: Repository

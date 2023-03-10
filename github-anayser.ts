@@ -1,11 +1,11 @@
 // @ts-nocheck
 
 import commandLineArgs from 'command-line-args';
-import {throwError} from "./src/utils/index.js";
-import * as csv from "./src/writer/csv/index.js";
-import {Definition} from "./src/definition/index.js";
-import * as io from "./src/utils/io.js";
-import {GithubAnalysis} from "./src/analysers/Analysis.js";
+import {throwError} from "./src/utils";
+import * as csv from "./src/writer/csv";
+import {Definition} from "./src/definition";
+import * as io from "./src/utils/io";
+import {GithubAnalysis} from "./src/analysers";
 
 const optionDefinitions = [
   {

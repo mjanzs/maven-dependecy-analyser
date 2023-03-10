@@ -1,10 +1,10 @@
-import {throwError} from "../../../utils/index.js";
-import {dir} from "../../../utils/io.js";
+import {throwError} from "../../../utils";
+import {dir} from "../../../utils/io";
 
 import {execSync} from "node:child_process";
 import * as fs from "node:fs";
 import * as graphvizParse from "ts-graphviz/ast";
-import { Artifact } from "./artifact.js";
+import { Artifact } from "./artifact";
 
 export class Maven {
 
@@ -16,11 +16,11 @@ export class Maven {
       console.warn(e.stdout.toString())
       throw new Error(e.message);
     }
-    return new Tree(this.#parseDependencyFile(
+    return new Tree(this.parseDependencyFile(
         dir(`${outputDir}/${repo}`) + "/" + "dependencies.dot"))
   }
 
-  #parseDependencyFile(dependencyFile) {
+  private parseDependencyFile(dependencyFile) {
     const content = fs.readFileSync(dependencyFile)
     const g = graphvizParse.parse(content.toString())
     return g
@@ -29,14 +29,14 @@ export class Maven {
 }
 
 class Tree {
-  #graph;
+  graph;
 
   constructor(graph) {
-    this.#graph = graph
+    this.graph = graph
   }
 
   getDependencies(): Artifact[] {
-    return this.flattenNodes(this.#graph)
+    return this.flattenNodes(this.graph)
         .map(Artifact.parseDependencyString);
   }
 
