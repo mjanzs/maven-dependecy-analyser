@@ -1,9 +1,9 @@
 export class Artifact {
-    groupId
-    artifactId
-    type
-    version
-    scope
+    groupId: string
+    artifactId: string
+    type: string
+    version: string
+    scope: string
 
     constructor(groupId, artifactId, type, version, scope) {
         this.groupId = groupId.trim();
@@ -13,7 +13,7 @@ export class Artifact {
         this.scope = scope?.trim();
     }
 
-    static parseDependencyString(str) {
+    static parseDependencyString(str): Artifact {
         const regex = /([^:]+):([^:]+):?([^:]*):?([^:]*):?([^:]*)/;
         let [_,
             groupId,
@@ -29,14 +29,14 @@ export class Artifact {
             scope || undefined)
     }
 
-    matching(other) {
+    matching(other): boolean{
         return Object.entries(this)
             .filter(([_, value]) => !!value)
             .map(([key, _]) => key)
             .reduce((result, key) => result && this[key] === other[key], true)
     }
 
-    identifier() {
+    identifier(): string {
         return `${this.groupId}:${this.artifactId}`
     }
 }

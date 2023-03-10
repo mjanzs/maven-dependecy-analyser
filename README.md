@@ -1,5 +1,5 @@
 # maven-dependecy-analyser
 
 ```
-ts-node-esm 
+node --loader ts-node/esm
 ```

@@ -22,12 +22,12 @@
  */
 
 export class Definition {
-  org
-  repos
-  analysers
-  transpose = false
+  org: string
+  repos: string[]
+  analysers: AnalyserDefinition[]
+  transpose: boolean = false
 
-  constructor(map) {
+  constructor(map: {[k: string]: any}) {
     for (let [key, value] of Object.entries(map)) {
       switch (key) {
         case "analysers":
@@ -40,10 +40,10 @@ export class Definition {
   }
 }
 
-class AnalyserDefinition {
-  type
+export class AnalyserDefinition {
+  type: string
 
-  static from(definition) {
+  static from(definition): AnalyserDefinition {
     switch (definition.type) {
       case "include-lang":
         return new LangAnalyserDefinition(definition)
@@ -67,7 +67,7 @@ class LangAnalyserDefinition extends AnalyserDefinition {
 }
 
 class DependencyVersionAnalyserDefinition extends AnalyserDefinition {
-  dependencies = []
+  dependencies: [string?] = []
 
   constructor(map) {
     super()
@@ -84,7 +84,7 @@ class DependabotAnalyserDefinition extends AnalyserDefinition {
 }
 
 class TopicsAnalyserDefinition extends AnalyserDefinition {
-  topics = []
+  topics: [string?] = []
 
   constructor(map) {
     super()
@@ -92,7 +92,7 @@ class TopicsAnalyserDefinition extends AnalyserDefinition {
   }
 }
 
-function init(o, map) {
+function init(o: any, map: {[k: string]: any}) {
   for (let [key, value] of Object.entries(map)) {
     o[key] = value
   }

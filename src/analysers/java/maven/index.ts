@@ -2,7 +2,7 @@ import {throwError} from "../../../utils/index.js";
 import {dir} from "../../../utils/io.js";
 
 import {execSync} from "node:child_process";
-import fs from "node:fs";
+import * as fs from "node:fs";
 import * as graphvizParse from "ts-graphviz/ast";
 import { Artifact } from "./artifact.js";
 
@@ -35,36 +35,35 @@ class Tree {
     this.#graph = graph
   }
 
-  getDependencies() {
-    return this.#flattenNodes(this.#graph)
+  getDependencies(): Artifact[] {
+    return this.flattenNodes(this.#graph)
         .map(Artifact.parseDependencyString);
   }
 
-  #flattenNodes(dependencyGraph) {
+  private flattenNodes(dependencyGraph): string[] {
     const graph = dependencyGraph.children
         .filter(item => item.type === 'Graph')[0]
 
-    return Object.keys(this.#traverseNode(graph)
+    return Object.keys(this.traverseNode(graph)
         .reduce((map, val) => {
           map[val] = val;
           return map;
-        }, {})
-    )
+        }, {}))
   }
 
-  #traverseNode(node) {
+  private traverseNode(node): string[] {
     return node.children
-        .flatMap(edge => this.#traverseEdge(edge))
+        .flatMap(edge => this.traverseEdge(edge))
   }
 
-  #traverseEdge(edge) {
-    edge.type === 'Edge' ?? throwExpression("not edge")
+  private traverseEdge(edge): string[] {
+    edge.type === 'Edge' ?? throwError("not edge")
     return edge.targets
-        .map(target => this.#parseNodeRef(target))
+        .map(target => this.parseNodeRef(target))
   }
 
-  #parseNodeRef(nodeRef) {
-    nodeRef.type === 'NodeRef' ?? throwExpression("not node ref")
+  private parseNodeRef(nodeRef): string {
+    nodeRef.type === 'NodeRef' ?? throwError("not node ref")
     return nodeRef.id.value;
   }
 }

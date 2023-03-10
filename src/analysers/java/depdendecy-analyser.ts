@@ -2,12 +2,13 @@ import {Analyser} from '../Analyser.js'
 import {AnalyserResult,MultiAnalyserResult,SingleAnalyserResult} from "../AnalyserResult.js";
 import {Maven} from "./maven/index.js";
 import {Artifact} from "./maven/artifact.js";
+import {Repository} from "../../repo/github/index.js";
 
 export class DependencyAnalyser extends Analyser {
-  repository
-  out
+  repository: Repository
+  out: string
 
-  constructor(repository, out) {
+  constructor(repository: Repository, out: string) {
     super('dependency-version');
     this.repository = repository
     this.out = out
@@ -27,7 +28,7 @@ export class DependencyAnalyser extends Analyser {
     return this.scanForVersions(artifacts, dependencies)
   }
 
-  scanForVersions(artifacts, dependencies) {
+  scanForVersions(artifacts: Artifact[], dependencies: Artifact[]) {
       const results = artifacts.map(artifact => {
           const match = dependencies
               .find(value => artifact.matching(value))

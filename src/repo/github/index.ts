@@ -3,7 +3,7 @@ import * as io from "../../utils/io.js";
 import {supportedLanguages} from "../../analysers/Analyser.js";
 
 export class Github {
-  octokit;
+  octokit: Octokit;
 
   constructor(apiKey) {
     this.octokit = new Octokit({
@@ -19,33 +19,33 @@ export class Github {
 export class Repository {
   static pom = 'pom.xml'
 
-  github
-  owner
-  repo
+  github: Github
+  owner: string
+  repo: string
 
-  constructor(github, owner, repo) {
+  constructor(github: Github, owner: string, repo: string) {
     this.github = github;
     this.owner = owner;
     this.repo = repo;
   }
 
-  mavenRepoRequests() {
+  mavenRepoRequests(): MavenContentRequests {
     return new MavenContentRequests(this)
   }
 
-  repoRequests() {
+  repoRequests(): RepoRequests {
     return new RepoRequests(this)
   }
 
-  dependabotRequests() {
+  dependabotRequests(): DependabotRequests {
     return new DependabotRequests(this)
   }
 }
 
 class RepoRequests {
-  github
-  owner
-  repo
+  github: Github
+  owner: string
+  repo: string
 
   constructor(repository) {
     this.github = repository.github
@@ -54,16 +54,16 @@ class RepoRequests {
   }
 
 
-  async resolveLanguage() {
+  async resolveLanguage(): Promise<string> {
     const languages = await this.listLanguages()
     const sorted = Object.entries(languages)
-      .sort(([_, a], [__, b]) => a > b)
+      .sort(([_, a], [__, b]) => a - b)
     const [top, _] = sorted
-      .find(([key, value]) => supportedLanguages.indexOf(key) >= 0) ?? sorted[0] ?? ""
-    return top
+      .find(([key, value]) => supportedLanguages.indexOf(key) >= 0) ?? "n/a"
+    return top as string
   }
 
-  async listLanguages() {
+  async listLanguages(): Promise<{ [k: string]: number }> {
     const response = await this.github.octokit.rest.repos.listLanguages({
       owner: this.owner,
       repo: this.repo

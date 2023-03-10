@@ -4,18 +4,18 @@ export class AnalyserResult {
         return new EmptyResult(scan)
     }
 
-    values() {
+    values(): {[k: string]: any} {
         throw new Error()
     }
 
-    headers() {
+    headers(): {[k: string]: any} {
         throw new Error()
     }
 }
 
 export class MultiAnalyserResult extends AnalyserResult {
-    scans
-    results
+    scans: string[]
+    results: AnalyserResult[]
 
     constructor(scans, results) {
         super()
@@ -39,13 +39,13 @@ export class MultiAnalyserResult extends AnalyserResult {
         }
     }
 
-    values() {
+    values(): {[k: string]: any} {
         return this.results.reduce((acc, result) => {
             return {
                 ...acc,
                 ...result.values()
             }
-        }, {})
+        }, {} as {[k: string]: any})
     }
 
     headers() {
@@ -72,10 +72,10 @@ export class MultiAnalyserResult extends AnalyserResult {
 }
 
 export class SingleAnalyserResult extends AnalyserResult {
-    scan
-    result
+    scan: string
+    result: string
 
-    constructor(scan, result) {
+    constructor(scan: string, result: string) {
         super()
         this.scan = scan
         this.result = result
@@ -89,20 +89,22 @@ export class SingleAnalyserResult extends AnalyserResult {
 
     headers() {
         return {
-            id: this.scan, title: this.title
+            id: this.scan, title: this.scan
         }
     }
 
 }
 
 class EmptyResult extends AnalyserResult {
+    scan: string
+
     constructor(scan) {
         super()
         this.scan = scan
     }
 
-    values() {
-        return {}
+    values(): [] {
+        return []
     }
 
     headers() {

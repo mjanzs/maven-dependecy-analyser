@@ -5,18 +5,13 @@ export const supportedLanguages = [
   'Go'
 ]
 
-export class AnalysisReporter {
-  repository
-  language
-}
-
 export class Analyser {
-  name
+  name: string
 
-  constructor(name) {
+  constructor(name: string) {
     this.name = name;
   }
-  async scan(definition) {
+  async scan(definition): Promise<AnalyserResult> {
     throw new Error()
   }
 }
