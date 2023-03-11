@@ -4,11 +4,12 @@ import {dir} from "../../../utils/io";
 import {execSync} from "node:child_process";
 import * as fs from "node:fs";
 import * as graphvizParse from "ts-graphviz/ast";
-import { Artifact } from "./artifact";
+import {Artifact} from "./artifact";
+import {DotASTNode} from "ts-graphviz/lib/ast";
 
 export class Maven {
 
-  execMvnTree(pom, repo, outputDir) {
+  execMvnTree(pom: string, repo: string, outputDir: string): Tree {
     const dependencyFile = "dependencies.dot";
     try {
       execSync(`mvn -f ${pom} dependency:tree -DoutputType=dot -DoutputFile=${dependencyFile}`)
@@ -20,7 +21,7 @@ export class Maven {
         dir(`${outputDir}/${repo}`) + "/" + "dependencies.dot"))
   }
 
-  private parseDependencyFile(dependencyFile) {
+  private parseDependencyFile(dependencyFile): DotASTNode {
     const content = fs.readFileSync(dependencyFile)
     const g = graphvizParse.parse(content.toString())
     return g
@@ -29,9 +30,9 @@ export class Maven {
 }
 
 class Tree {
-  graph;
+  graph: DotASTNode
 
-  constructor(graph) {
+  constructor(graph: DotASTNode) {
     this.graph = graph
   }
 
@@ -40,7 +41,7 @@ class Tree {
         .map(Artifact.parseDependencyString);
   }
 
-  private flattenNodes(dependencyGraph): string[] {
+  private flattenNodes(dependencyGraph: DotASTNode): string[] {
     const graph = dependencyGraph.children
         .filter(item => item.type === 'Graph')[0]
 

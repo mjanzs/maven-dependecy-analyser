@@ -1,7 +1,7 @@
 import {Github} from "../repo/github";
 import {LangAnalyser} from "./LangAnalyser";
 import {DependencyAnalyser as JavaDependencyAnalyser} from "./java/depdendecy-analyser";
-import {MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult";
+import {AnalyserResult, MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult";
 import {DependabotAnalyser} from "./DependabotAnalyser";
 import {TopicsAnalyser} from "./TopicsAnalyser";
 import {AnalyserDefinition, Definition} from "../definition";
@@ -14,7 +14,7 @@ export class GithubAnalysis {
     this.github = new Github(apiKey);
   }
 
-  async execute(definition: Definition, outDir: string) {
+  async execute(definition: Definition, outDir: string): Promise<AnalyserResult[]> {
     const executions = definition.repos
         .map(repo => {
           return new AnalysersConfiguration(repo, outDir, definition.org, definition.analysers)
@@ -23,7 +23,7 @@ export class GithubAnalysis {
     return await Promise.all(executions)
   }
 
-  private async executeAnalysis({repo, org, analysers, outDir}) {
+  private async executeAnalysis({repo, org, analysers, outDir}): Promise<MultiAnalyserResult> {
     const repository = this.github.repo(org, repo)
 
     const results = analysers.map(a => this.executeAnalyser(repository, a, outDir));

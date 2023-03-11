@@ -1,14 +1,14 @@
 import fs from "node:fs"
 import https from "node:https"
 
-export function dir(dirName) {
+export function dir(dirName): string {
   if (!fs.existsSync(dirName)){
     fs.mkdirSync(dirName, { recursive: true });
   }
   return dirName;
 }
 
-export function downloadFile(downloadUrl, fileName) {
+export function downloadFile(downloadUrl, fileName): Promise<string> {
   const file = fs.createWriteStream(fileName);
   return new Promise((resolve, reject) => {
     https.get(downloadUrl, function (response) {
@@ -22,6 +22,6 @@ export function downloadFile(downloadUrl, fileName) {
   })
 }
 
-export function readJsonFile(location) {
-  return JSON.parse(fs.readFileSync(location));
+export function readJsonFile(location): {} {
+  return JSON.parse(fs.readFileSync(location).toString());
 }

@@ -29,7 +29,7 @@ export class Artifact {
             scope || undefined)
     }
 
-    matching(other): boolean{
+    matching(other): boolean {
         return Object.entries(this)
             .filter(([_, value]) => !!value)
             .map(([key, _]) => key)

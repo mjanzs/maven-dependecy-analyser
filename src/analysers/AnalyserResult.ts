@@ -23,7 +23,7 @@ export class MultiAnalyserResult extends AnalyserResult {
         this.results = results
     }
 
-    static reducer() {
+    static reducer(): (acc: MultiAnalyserResult, AnalyserResult) => MultiAnalyserResult {
         return (acc, item) => {
             const result = acc || new MultiAnalyserResult([], [])
             switch (true) {
@@ -41,13 +41,13 @@ export class MultiAnalyserResult extends AnalyserResult {
         }
     }
 
-    values(): {[k: string]: any} {
+    values() {
         return this.results.reduce((acc, result) => {
             return {
                 ...acc,
                 ...result.values()
             }
-        }, {} as {[k: string]: any})
+        }, {})
     }
 
     headers() {
@@ -105,8 +105,8 @@ class EmptyResult extends AnalyserResult {
         this.scan = scan
     }
 
-    values(): [] {
-        return []
+    values() {
+        return {}
     }
 
     headers() {

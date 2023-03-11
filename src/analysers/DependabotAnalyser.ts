@@ -1,10 +1,11 @@
 import {Analyser} from "./Analyser";
 import {MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult";
+import {Repository} from "../repo/github";
 
 export class DependabotAnalyser extends Analyser {
-  repository
+  repository: Repository
 
-  constructor(repository) {
+  constructor(repository: Repository) {
     super('dependabot')
     this.repository = repository
   }
@@ -13,6 +14,7 @@ export class DependabotAnalyser extends Analyser {
     const securityAlerts = await this.repository.dependabotRequests()
       .securityAlerts()
     const results = securityAlerts
+    // @ts-ignore
       .map(alert => new SingleAnalyserResult(alert.dependency, alert.cve))
     return MultiAnalyserResult.fromSingleResults(results)
   }

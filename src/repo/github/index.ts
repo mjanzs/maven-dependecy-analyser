@@ -86,9 +86,9 @@ class RepoRequests {
 }
 
 class MavenContentRequests {
-  github
-  owner
-  repo
+  github: Github
+  owner: string
+  repo: string
 
   constructor(repository) {
     this.github = repository.github
@@ -103,21 +103,22 @@ class MavenContentRequests {
     return await io.downloadFile(downloadUrl, pomFile)
   }
 
-  async getRootPomUrl() {
+  async getRootPomUrl(): Promise<string> {
 
     const response = await this.github.octokit.rest.repos.getContent({
       owner: this.owner,
       repo: this.repo,
       path: Repository.pom
     })
+    // @ts-ignore
     return response.data.download_url
   }
 }
 
 class DependabotRequests {
-  github
-  owner
-  repo
+  github: Github
+  owner: string
+  repo: string
 
   constructor(repository) {
     this.github = repository.github

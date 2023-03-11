@@ -28,7 +28,7 @@ export class DependencyAnalyser extends Analyser {
     return this.scanForVersions(artifacts, dependencies)
   }
 
-  scanForVersions(artifacts: Artifact[], dependencies: Artifact[]) {
+  scanForVersions(artifacts: Artifact[], dependencies: Artifact[]): AnalyserResult {
       const results = artifacts.map(artifact => {
           const match = dependencies
               .find(value => artifact.matching(value))
