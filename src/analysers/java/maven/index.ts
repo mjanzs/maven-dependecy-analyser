@@ -1,5 +1,5 @@
 import {throwError} from "../../../utils";
-import {dir} from "../../../utils/io";
+import {mkdir} from "../../../utils/io";
 
 import {execSync} from "node:child_process";
 import * as fs from "node:fs";
@@ -18,7 +18,7 @@ export class Maven {
       throw new Error(e.message);
     }
     return new Tree(this.parseDependencyFile(
-        dir(`${outputDir}/${repo}`) + "/" + "dependencies.dot"))
+        mkdir(`${outputDir}/${repo}`) + "/" + "dependencies.dot"))
   }
 
   private parseDependencyFile(dependencyFile): DotASTNode {

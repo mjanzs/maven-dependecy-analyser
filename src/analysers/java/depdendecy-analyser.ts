@@ -16,10 +16,10 @@ export class DependencyAnalyser extends Analyser {
 
   async scan(definition) {
     const requests = this.repository.mavenRepoRequests()
-    const pom = await requests.downloadRootPom(this.out)
+    const rootPom = await requests.downloadRootPoms(this.out)
 
     const dependencies = new Maven()
-      .execMvnTree(pom, this.repository.repo, this.out)
+      .execMvnTree(rootPom, this.repository.repo, this.out)
       .getDependencies()
 
     const artifacts = definition.dependencies

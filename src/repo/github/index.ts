@@ -1,3 +1,4 @@
+import * as f from "path";
 import {Octokit} from "@octokit/rest";
 import * as io from "../../utils/io";
 import {supportedLanguages} from "../../analysers/Analyser";
@@ -17,7 +18,6 @@ export class Github {
 }
 
 export class Repository {
-  static pom = 'pom.xml'
 
   github: Github
   owner: string
@@ -96,19 +96,32 @@ class MavenContentRequests {
     this.repo = repository.repo
   }
 
-  async downloadRootPom(outputDir) {
-    const downloadUrl = await this.getRootPomUrl()
-
-    const pomFile = io.dir(`${outputDir}/${this.repo}`) + "/" + Repository.pom;
-    return await io.downloadFile(downloadUrl, pomFile)
+  async downloadRootPoms(outputDir): Promise<string> {
+    const response = await this.github.octokit.search.code({
+      q: `filename:pom.xml+repo:${this.owner}/${this.repo}`
+    })
+    const poms = await Promise.all(response.data.items.map((item) => {
+      return new File(item.name, item.path)
+    }).map(async (file) => {
+      return this.downloadPom(outputDir, file)
+    }))
+    // todo handle zero pom
+    return poms.find(value => f.dirname(value) === `${outputDir}/${this.repo}`) as string
   }
 
-  async getRootPomUrl(): Promise<string> {
+  async downloadPom(outputDir: string, file: File) {
+    const path = f.parse(file.path)
+    const downloadUrl = await this.getRootPomUrl(file.path)
+    const destination = f.join(outputDir, this.repo, path.dir, path.base)
+    io.mkdir(f.dirname(destination))
+    return await io.downloadFile(downloadUrl, destination)
+  }
 
+  async getRootPomUrl(path): Promise<string> {
     const response = await this.github.octokit.rest.repos.getContent({
       owner: this.owner,
       repo: this.repo,
-      path: Repository.pom
+      path
     })
     // @ts-ignore
     return response.data.download_url
@@ -156,5 +169,15 @@ class DependabotRequests {
       }
       return []
     }
+  }
+}
+
+class File {
+  name: string
+  path: string
+
+  constructor(name: string, path: string) {
+    this.name = name
+    this.path = path
   }
 }

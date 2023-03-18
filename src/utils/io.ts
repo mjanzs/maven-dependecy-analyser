@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import https from "node:https"
 
-export function dir(dirName): string {
+export function mkdir(dirName): string {
   if (!fs.existsSync(dirName)){
     fs.mkdirSync(dirName, { recursive: true });
   }
