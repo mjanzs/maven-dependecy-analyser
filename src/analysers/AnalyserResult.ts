@@ -64,7 +64,7 @@ export class MultiAnalyserResult extends AnalyserResult {
     //     }
     // }
 
-    static fromSingleResults(results) {
+    static fromSingleResults(results: SingleAnalyserResult[]) {
         const map = results.reduce((acc, r) => {
             acc[r.scan] = r
             return acc
@@ -97,12 +97,10 @@ export class SingleAnalyserResult extends AnalyserResult {
 
 }
 
-class EmptyResult extends AnalyserResult {
-    scan: string
+class EmptyResult extends SingleAnalyserResult {
 
     constructor(scan) {
-        super()
-        this.scan = scan
+        super(scan, '')
     }
 
     values() {

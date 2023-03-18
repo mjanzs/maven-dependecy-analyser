@@ -75,7 +75,9 @@ class DependencyVersionAnalyserDefinition extends AnalyserDefinition {
   }
 }
 
-class DependabotAnalyserDefinition extends AnalyserDefinition {
+export class DependabotAnalyserDefinition extends AnalyserDefinition {
+
+  includeCount: boolean;
 
   constructor(map) {
     super()
