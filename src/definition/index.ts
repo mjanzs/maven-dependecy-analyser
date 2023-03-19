@@ -26,6 +26,8 @@ export class Definition {
   repos: string[]
   analysers: AnalyserDefinition[]
   transpose: boolean = false
+  output: string = "out.csv"
+
 
   constructor(map: {[k: string]: any}) {
     for (let [key, value] of Object.entries(map)) {

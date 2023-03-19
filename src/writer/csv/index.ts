@@ -1,6 +1,7 @@
 import {createObjectCsvWriter, createArrayCsvWriter} from "csv-writer";
 
 export function writeTransposed(dirName: string,
+                                fileName: string,
                                 headers: [{[k: string]: string}],
                                 values: [{[k: string]: string}]) {
 
@@ -18,17 +19,17 @@ export function writeTransposed(dirName: string,
   }
 
   const csvWriter = createArrayCsvWriter({
-    path: `${dirName}/result.csv`
+    path: `${dirName}/${fileName}`
   });
   csvWriter.writeRecords(transpose([headersAsArray, ...valuesAsArrays])).then(() => {
     console.log('...Done');
   });
 }
 
-export function write(dirName, header, values): Promise<any> {
+export function write(dirName, fileName, header, values): Promise<any> {
   const csvWriter = createObjectCsvWriter({
     header,
-    path: `${dirName}/result.csv`
+    path: `${dirName}/${fileName}`
   });
   return csvWriter.writeRecords(values).then(() => {
     console.log('...Done');

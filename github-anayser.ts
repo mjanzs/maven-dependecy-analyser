@@ -47,9 +47,9 @@ await (async function() {
     const values = results.map(r => r.values());
 
     if (definition.transpose) {
-      await csv.writeTransposed(outDir, headers, values)
+      await csv.writeTransposed(outDir, definition.output, headers, values)
     } else {
-      await csv.write(outDir, headers, values)
+      await csv.write(outDir, definition.output, headers, values)
     }
   })
 })()
