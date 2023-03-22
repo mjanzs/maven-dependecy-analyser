@@ -17,7 +17,7 @@ export class GithubAnalysis {
   async execute(definition: Definition, outDir: string): Promise<AnalyserResult[]> {
     const executions = definition.repos
         .map(repo => {
-          return new AnalysersConfiguration(repo, outDir, definition.org, definition.analysers)
+          return new AnalysersConfiguration(repo, outDir, definition)
         })
         .map(config => this.executeAnalysis(config))
     return await Promise.all(executions)
@@ -28,7 +28,7 @@ export class GithubAnalysis {
 
     const results = analysers.map(a => this.executeAnalyser(repository, a, outDir));
     const allResults = await Promise.all(
-        [new SingleAnalyserResult('repo', repo),
+        [new SingleAnalyserResult('repo', repo.name),
           ...results])
 
     return allResults.reduce(MultiAnalyserResult.reducer(), null);
@@ -48,18 +48,33 @@ export class GithubAnalysis {
 }
 
 class AnalysersConfiguration {
-  repo: string
+  repo: RepositoryMetadata
   outDir: string
   org: string
   analysers: AnalyserDefinition[]
 
-  constructor(repo: string,
+  constructor(repo: string | RepositoryMetadata,
               outDir: string,
-              org: string,
-              analysers: AnalyserDefinition[]) {
-    this.repo = repo;
+              analysisDefinition: Definition) {
+    this.repo = this.resolveRepoMetadata(repo, analysisDefinition.pomFiles);
     this.outDir = outDir;
-    this.org = org;
-    this.analysers = analysers;
+    this.org = analysisDefinition.org;
+    this.analysers = analysisDefinition.analysers;
   }
+
+  private resolveRepoMetadata(repo: string | RepositoryMetadata, pomFiles: string[]): RepositoryMetadata {
+    if (typeof repo === 'string') {
+      return {
+        name: repo as string,
+        pomFiles: pomFiles
+      }
+    } else {
+      return repo as RepositoryMetadata
+    }
+  }
+}
+
+export type RepositoryMetadata = {
+  name: string,
+  pomFiles: string[]
 }

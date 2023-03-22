@@ -27,6 +27,7 @@ export class Definition {
   analysers: AnalyserDefinition[]
   transpose: boolean = false
   output: string = "out.csv"
+  pomFiles: string[]
 
 
   constructor(map: {[k: string]: any}) {

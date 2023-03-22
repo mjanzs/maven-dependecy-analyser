@@ -2,6 +2,7 @@ import * as f from "path";
 import {Octokit} from "@octokit/rest";
 import * as io from "../../utils/io";
 import {supportedLanguages} from "../../analysers/Analyser";
+import {RepositoryMetadata} from "../../analysers";
 
 export class Github {
   octokit: Octokit;
@@ -12,7 +13,7 @@ export class Github {
     })
   }
 
-  repo(owner, repo) {
+  repo(owner, repo: RepositoryMetadata) {
     return new Repository(this, owner, repo)
   }
 }
@@ -22,11 +23,13 @@ export class Repository {
   github: Github
   owner: string
   repo: string
+  repositoryMetadata: RepositoryMetadata
 
-  constructor(github: Github, owner: string, repo: string) {
+  constructor(github: Github, owner: string, repositoryMetadata: RepositoryMetadata) {
     this.github = github;
     this.owner = owner;
-    this.repo = repo;
+    this.repositoryMetadata = repositoryMetadata;
+    this.repo = repositoryMetadata.name;
   }
 
   mavenRepoRequests(): MavenContentRequests {
@@ -47,10 +50,10 @@ class RepoRequests {
   owner: string
   repo: string
 
-  constructor(repository) {
+  constructor(repository: Repository) {
     this.github = repository.github
     this.owner = repository.owner
-    this.repo = repository.repo
+    this.repo = repository.repositoryMetadata.name
   }
 
 
@@ -88,39 +91,49 @@ class RepoRequests {
 class MavenContentRequests {
   github: Github
   owner: string
-  repo: string
+  repositoryMetadata: RepositoryMetadata
 
   constructor(repository) {
     this.github = repository.github
     this.owner = repository.owner
-    this.repo = repository.repo
+    this.repositoryMetadata = repository.repositoryMetadata
   }
 
   async downloadRootPoms(outputDir): Promise<string> {
-    const response = await this.github.octokit.search.code({
-      q: `filename:pom.xml+repo:${this.owner}/${this.repo}`
-    })
-    const poms = await Promise.all(response.data.items.map((item) => {
-      return new File(item.name, item.path)
-    }).map(async (file) => {
-      return this.downloadPom(outputDir, file)
-    }))
+    let poms: string[]
+    if (!this.repositoryMetadata.pomFiles) {
+      const response = await this.github.octokit.search.code({
+        q: `filename:pom.xml+repo:${this.owner}/${this.repositoryMetadata.name}`
+      })
+      poms = await Promise.all(response.data.items.map((item) => {
+        return new File(item.name, item.path)
+      }).map(async (file) => {
+        return this.downloadPom(outputDir, file)
+      }))
+    } else {
+      poms = await Promise.all(this.repositoryMetadata.pomFiles.map(value => {
+        return new File(f.basename(value), value)
+      }).map(async (file) => {
+        return this.downloadPom(outputDir, file)
+      }))
+    }
+
     // todo handle zero pom
-    return poms.find(value => f.dirname(value) === `${outputDir}/${this.repo}`) as string
+    return poms.find(value => f.dirname(value) === `${outputDir}/${this.repositoryMetadata.name}`) as string
   }
 
-  async downloadPom(outputDir: string, file: File) {
+  async downloadPom(outputDir: string, file: File): Promise<string> {
     const path = f.parse(file.path)
     const downloadUrl = await this.getRootPomUrl(file.path)
-    const destination = f.join(outputDir, this.repo, path.dir, path.base)
+    const destination = f.join(outputDir, this.repositoryMetadata.name, path.dir, path.base)
     io.mkdir(f.dirname(destination))
-    return await io.downloadFile(downloadUrl, destination)
+    return io.downloadFile(downloadUrl, destination)
   }
 
   async getRootPomUrl(path): Promise<string> {
     const response = await this.github.octokit.rest.repos.getContent({
       owner: this.owner,
-      repo: this.repo,
+      repo: this.repositoryMetadata.name,
       path
     })
     // @ts-ignore
