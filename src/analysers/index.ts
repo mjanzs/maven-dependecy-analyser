@@ -4,8 +4,8 @@ import {DependencyAnalyser as JavaDependencyAnalyser} from "./java/depdendecy-an
 import {AnalyserResult, MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult";
 import {DependabotAnalyser} from "./DependabotAnalyser";
 import {TopicsAnalyser} from "./TopicsAnalyser";
-import {AnalyserDefinition, Definition} from "../definition";
 import {Analyser} from "./Analyser";
+import {AnalyserDefinition, RootDefinition} from "../definition";
 
 export class GithubAnalysis {
   github: Github
@@ -14,16 +14,21 @@ export class GithubAnalysis {
     this.github = new Github(apiKey);
   }
 
-  async execute(definition: Definition, outDir: string): Promise<AnalyserResult[]> {
+  async execute(definition: RootDefinition, outDir: string): Promise<AnalyserResult[]> {
     const executions = definition.repos
         .map(repo => {
-          return new AnalysersConfiguration(repo, outDir, definition)
+          return {
+            repo,
+            outDir,
+            org: definition.org,
+            analysers: definition.analysers
+          } as AnalyserContext
         })
         .map(config => this.executeAnalysis(config))
     return await Promise.all(executions)
   }
 
-  private async executeAnalysis({repo, org, analysers, outDir}): Promise<MultiAnalyserResult> {
+  private async executeAnalysis({org, repo, outDir, analysers}): Promise<MultiAnalyserResult> {
     const repository = this.github.repo(org, repo)
 
     const results = analysers.map(a => this.executeAnalyser(repository, a, outDir));
@@ -47,34 +52,9 @@ export class GithubAnalysis {
   }
 }
 
-class AnalysersConfiguration {
-  repo: RepositoryMetadata
-  outDir: string
+export type AnalyserContext = {
   org: string
+  repo: string
+  outDir: string
   analysers: AnalyserDefinition[]
-
-  constructor(repo: string | RepositoryMetadata,
-              outDir: string,
-              analysisDefinition: Definition) {
-    this.repo = this.resolveRepoMetadata(repo, analysisDefinition.pomFiles);
-    this.outDir = outDir;
-    this.org = analysisDefinition.org;
-    this.analysers = analysisDefinition.analysers;
-  }
-
-  private resolveRepoMetadata(repo: string | RepositoryMetadata, pomFiles: string[]): RepositoryMetadata {
-    if (typeof repo === 'string') {
-      return {
-        name: repo as string,
-        pomFiles: pomFiles
-      }
-    } else {
-      return repo as RepositoryMetadata
-    }
-  }
-}
-
-export type RepositoryMetadata = {
-  name: string,
-  pomFiles: string[]
 }

@@ -3,9 +3,9 @@
 import commandLineArgs from 'command-line-args';
 import {throwError} from "./src/utils";
 import * as csv from "./src/writer/csv";
-import {Definition} from "./src/definition";
 import * as io from "./src/utils/io";
 import {GithubAnalysis} from "./src/analysers";
+import {RootDefinition} from "./src/definition";
 
 const optionDefinitions = [
   {
@@ -31,8 +31,9 @@ const definitions: string = (options['definition'] ?? throwError("definition can
 
 await (async function() {
   definitions.map(async location => {
-    const d = await io.readJsonFile(location);
-    const definition = new Definition(d)
+    const definition: RootDefinition = {
+      ...io.readJsonFile(location)
+    }
 
     const results = await new GithubAnalysis(apiKey)
       .execute(definition, outDir)

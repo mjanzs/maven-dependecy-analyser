@@ -1,4 +1,5 @@
 import {AnalyserResult} from "./AnalyserResult";
+import {BaseDefinition} from "../definition";
 
 export const supportedLanguages = [
   'Java',
@@ -11,7 +12,7 @@ export class Analyser {
   constructor(name: string) {
     this.name = name;
   }
-  async scan(definition): Promise<AnalyserResult> {
+  async scan(definition: BaseDefinition): Promise<AnalyserResult> {
     throw new Error()
   }
 }
