@@ -155,10 +155,10 @@ class DependabotRequests {
       return response.data
         .filter((item) => item.state === 'open')
         .map((item) => {
-          const cve = item.security_advisory.cve_id
+          const issue = item.security_advisory.cve_id ?? item.security_vulnerability.vulnerable_version_range
           const dependency = item.security_vulnerability.package.name
           return {
-            cve,
+            cve: issue,
             dependency
           }
         })
