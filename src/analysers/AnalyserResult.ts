@@ -23,24 +23,6 @@ export class MultiAnalyserResult extends AnalyserResult {
         this.results = results
     }
 
-    static reducer(): (acc: MultiAnalyserResult, AnalyserResult) => MultiAnalyserResult {
-        return (acc, item) => {
-            const result = acc || new MultiAnalyserResult([], [])
-            switch (true) {
-                case item instanceof SingleAnalyserResult:
-                    return new MultiAnalyserResult(
-                      [...result.scans, item.scan],
-                      [...result.results, item])
-                case item instanceof MultiAnalyserResult:
-                    return new MultiAnalyserResult(
-                      [...result.scans, ...item.scans],
-                      [...result.results, ...item.results])
-                default:
-                    throw new Error();
-            }
-        }
-    }
-
     values() {
         return this.results.reduce((acc, result) => {
             return {
@@ -70,6 +52,16 @@ export class MultiAnalyserResult extends AnalyserResult {
             return acc
         }, {});
         return new MultiAnalyserResult(Object.keys(map), Object.values(map))
+    }
+
+    mergeSingle(analyserResult: SingleAnalyserResult) {
+        return this.mergeMulti(new MultiAnalyserResult([analyserResult.scan], [analyserResult]));
+    }
+
+    mergeMulti(analyserResult: MultiAnalyserResult) {
+        return new MultiAnalyserResult(
+          [...this.scans, ...analyserResult.scans],
+          [...this.results, ...analyserResult.results])
     }
 }
 

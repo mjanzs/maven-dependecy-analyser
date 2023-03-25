@@ -84,19 +84,19 @@ function executor() {
 
     switch (true) {
       case analyserResult instanceof EmptyResult: {
-        return acc
+        return result
       }
       case analyserResult instanceof SingleAnalyserResult: {
-        const item = analyserResult as SingleAnalyserResult
-        return new MultiAnalyserResult(
-          [...result.scans, item.scan],
-          [...result.results, item])
+        return result.mergeSingle(analyserResult as SingleAnalyserResult)
+          // new MultiAnalyserResult(
+          // [...result.scans, item.scan],
+          // [...result.results, item])
       }
       case analyserResult instanceof MultiAnalyserResult: {
-        const item = analyserResult as MultiAnalyserResult
-        return new MultiAnalyserResult(
-          [...result.scans, ...item.scans],
-          [...result.results, ...item.results])
+        return result.mergeMulti(analyserResult as MultiAnalyserResult)
+        // return new MultiAnalyserResult(
+        //   [...result.scans, ...item.scans],
+        //   [...result.results, ...item.results])
       }
       default:
         throw new Error();
