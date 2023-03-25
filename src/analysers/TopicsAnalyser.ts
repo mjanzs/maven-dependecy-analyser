@@ -5,7 +5,7 @@ import {Repository} from "../repo/github";
 export class TopicsAnalyser extends Analyser {
   repository: Repository
 
-  constructor(repository) {
+  constructor(repository: Repository) {
     super('topics');
     this.repository = repository
   }

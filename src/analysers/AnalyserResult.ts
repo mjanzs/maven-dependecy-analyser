@@ -1,7 +1,7 @@
 export class AnalyserResult {
 
-    static empty(scan) {
-        return new EmptyResult(scan)
+    static empty(scan, value?) {
+        return new EmptyResult(scan, value)
     }
 
     values(): {[k: string]: any} {
@@ -15,7 +15,7 @@ export class AnalyserResult {
 
 export class MultiAnalyserResult extends AnalyserResult {
     scans: string[]
-    results: AnalyserResult[]
+    results: SingleAnalyserResult[]
 
     constructor(scans, results) {
         super()
@@ -97,10 +97,10 @@ export class SingleAnalyserResult extends AnalyserResult {
 
 }
 
-class EmptyResult extends SingleAnalyserResult {
+export class EmptyResult extends SingleAnalyserResult {
 
-    constructor(scan) {
-        super(scan, '')
+    constructor(scan, result?: string) {
+        super(scan, result ?? '')
     }
 
     values() {

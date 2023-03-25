@@ -4,6 +4,7 @@ import {Maven} from "./maven";
 import {Artifact} from "./maven/artifact";
 import {Repository} from "../../repo/github";
 import {DependencyAnalyserDefinition} from "../../definition";
+import {LangAnalyser} from "../LangAnalyser";
 
 export class DependencyAnalyser extends Analyser {
   repository: Repository
@@ -13,6 +14,12 @@ export class DependencyAnalyser extends Analyser {
     super('dependency-version');
     this.repository = repository
     this.out = out
+  }
+
+  shouldRun(partialResult: MultiAnalyserResult): boolean {
+    return partialResult.results
+      .filter(result => result.scan == LangAnalyser.NAME)
+      .some(value => value.result == 'Java');
   }
 
   async scan(definition: DependencyAnalyserDefinition) {

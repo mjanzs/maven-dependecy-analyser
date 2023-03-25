@@ -12,7 +12,7 @@ export class Github {
     })
   }
 
-  repo(owner: string, repo: string) {
+  repo(owner: string, repo: string): Repository{
     return new Repository(this, owner, repo)
   }
 }
@@ -56,8 +56,8 @@ class RepoRequests {
     const languages = await this.listLanguages()
     const sorted = Object.entries(languages)
       .sort(([_, a], [__, b]) => a - b)
-    const [top, _] = sorted
-      .find(([key, value]) => supportedLanguages.indexOf(key) >= 0) ?? ["n/a", 0]
+    const [top] = sorted
+      .find(([key, value]) => supportedLanguages.indexOf(key) >= 0) ?? ["n/a"]
     return top as string
   }
 
