@@ -1,8 +1,14 @@
 export type RootDefinition = {
   org: string
-  repos: string[]
+  repos: RepositoryDefinition[]
   analysers: AnalyserDefinition[]
   transpose: boolean
+}
+
+export type RepositoryDefinition = {
+  org: string
+  name: string
+  projectLocation?: string
 }
 
 export type AnalyserDefinition =
@@ -14,7 +20,7 @@ export type AnalyserDefinition =
 export type BaseDefinition = {
   type: string
   org: string
-  repo: string
+  repo: RepositoryDefinition
 }
 
 export type LangAnalyserDefinition = BaseDefinition;

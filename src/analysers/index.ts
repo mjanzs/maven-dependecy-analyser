@@ -4,7 +4,7 @@ import {DependencyAnalyser as JavaDependencyAnalyser} from "./java/DepdendecyAna
 import {AnalyserResult, EmptyResult, MultiAnalyserResult, SingleAnalyserResult} from "./AnalyserResult";
 import {DependabotAnalyser} from "./DependabotAnalyser";
 import {TopicsAnalyser} from "./TopicsAnalyser";
-import {AnalyserDefinition, RootDefinition} from "../definition";
+import {AnalyserDefinition, RepositoryDefinition, RootDefinition} from "../definition";
 import {Analyser} from "./Analyser";
 import {throwError} from "../utils";
 
@@ -17,32 +17,47 @@ export class GithubAnalysis {
 
   async execute(definition: RootDefinition, outDir: string): Promise<AnalyserResult[]> {
     const executions = definition.repos
-        .map(repo => {
-          return {
-            repo,
-            outDir,
-            org: definition.org,
-            analysers: definition.analysers
-          } as AnalysisDefinition
-        })
-        .map((analysisDefinition) => {
-          return analysisDefinition.analysers
-            .map(value => {
-              return {
-                ...analysisDefinition,
-                ...value
-              }
-            })
-            .map(analyserDefinition => this.createAnalyserContext(analysisDefinition, analyserDefinition))
-            .reduce(executor(), initValue(analysisDefinition.repo))
-        })
+      .map((repo) => this.parseRepo(definition.org, repo))
+      .map((repo: RepositoryDefinition) => {
+        return {
+          repo,
+          outDir,
+          org: definition.org,
+          analysers: definition.analysers
+        } as AnalysisDefinition
+      })
+      .map((analysisDefinition) => {
+        return analysisDefinition.analysers
+          .map(value => {
+            return {
+              ...analysisDefinition,
+              ...value
+            }
+          })
+          .map(analyserDefinition => this.createAnalyserContext(analysisDefinition, analyserDefinition))
+          .reduce(executor(), initValue(analysisDefinition.repo))
+      })
     return await Promise.all(executions)
+  }
+
+  private parseRepo(org: string, repo: RepositoryDefinition | string): RepositoryDefinition {
+    if (typeof repo === 'string') {
+      return {
+        org: org,
+        name: repo
+      };
+    } else {
+      return {
+        ...repo,
+        org
+      };
+    }
   }
 
   private createAnalyserContext(analysisDefinition: AnalysisDefinition, analyserDefinition: AnalyserDefinition): AnalyserContext {
     const {outDir} = analysisDefinition
     const {org, repo, type} = analyserDefinition
-    const repository = this.github.repo(org, repo)
+    const repository = this.github.repo(org, repo.name)
 
     return {
       analysisDefinition,
@@ -89,9 +104,11 @@ function executor() {
   }
 }
 
-function initValue(repo: string) {
+function initValue(repo: RepositoryDefinition) {
   return Promise.resolve(
-    new MultiAnalyserResult(['repo'], [new SingleAnalyserResult('repo', repo)]))
+    new MultiAnalyserResult(
+      ['repo'],
+      [new SingleAnalyserResult('repo', repo.name)]))
 }
 
 export type AnalyserContext = {
@@ -102,7 +119,7 @@ export type AnalyserContext = {
 
 export type AnalysisDefinition = {
   org: string
-  repo: string
+  repo: RepositoryDefinition
   outDir: string
   analysers: AnalyserDefinition[]
 }

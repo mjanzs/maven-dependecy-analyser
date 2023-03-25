@@ -23,9 +23,7 @@ export class DependencyAnalyser extends Analyser {
   }
 
   async scan(definition: DependencyAnalyserDefinition) {
-    const requests = this.repository.mavenRepoRequests()
-    const pomFiles = definition.poms ?? await requests.findFiles('pom.xml')
-    const rootPom = await requests.downloadPoms(this.out, pomFiles)
+    const rootPom = await this.resolvePoms(definition)
 
     const dependencies = new Maven()
       .execMvnTree(rootPom, this.repository.repo, this.out)
@@ -35,6 +33,16 @@ export class DependencyAnalyser extends Analyser {
       .map(value => Artifact.parseDependencyString(value));
 
     return this.scanForVersions(artifacts, dependencies)
+  }
+
+  private async resolvePoms(definition: DependencyAnalyserDefinition): Promise<string> {
+    if (definition.repo.projectLocation) {
+      return `${definition.repo.projectLocation}/pom.xml`
+    } else {
+      const requests = this.repository.mavenRepoRequests()
+      const pomFiles = definition.poms ?? await requests.findFiles('pom.xml')
+      return requests.downloadPoms(this.out, pomFiles)
+    }
   }
 
   scanForVersions(artifacts: Artifact[], dependencies: Artifact[]): AnalyserResult {
