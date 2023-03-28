@@ -23,16 +23,21 @@ export class DependencyAnalyser extends Analyser {
   }
 
   async scan(definition: DependencyAnalyserDefinition) {
-    const rootPom = await this.resolvePoms(definition)
+    try {
+      const rootPom = await this.resolvePoms(definition)
 
-    const dependencies = new Maven()
-      .execMvnTree(rootPom, this.repository.repo, this.out)
-      .getDependencies()
+      const dependencies = new Maven()
+        .execMvnTree(rootPom, this.repository.repo, this.out)
+        .getDependencies()
 
-    const artifacts = definition.dependencies
-      .map(value => Artifact.parseDependencyString(value));
+      const artifacts = definition.dependencies
+        .map(value => Artifact.parseDependencyString(value));
 
-    return this.scanForVersions(artifacts, dependencies)
+      return this.scanForVersions(artifacts, dependencies)
+    } catch (e) {
+      console.warn(e)
+      return AnalyserResult.empty(this.name)
+    }
   }
 
   private async resolvePoms(definition: DependencyAnalyserDefinition): Promise<string> {

@@ -7,10 +7,12 @@ import * as graphvizParse from "ts-graphviz/ast";
 import {Artifact} from "./artifact";
 import {DotASTNode} from "ts-graphviz/lib/ast";
 
+
 export class Maven {
 
   execMvnTree(pom: string, repo: string, outputDir: string): Tree {
-    const dependencyFile = "dependencies.dot";
+    const dependencyFile = `${process.cwd()}/${outputDir}/${repo}/dependencies.dot`;
+    console.log(`mvn -f ${pom} dependency:tree -DoutputType=dot -DoutputFile=${dependencyFile}`)
     try {
       execSync(`mvn -f ${pom} dependency:tree -DoutputType=dot -DoutputFile=${dependencyFile}`)
     } catch (e) {

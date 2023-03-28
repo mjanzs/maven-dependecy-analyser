@@ -75,6 +75,7 @@ export class GithubAnalysis {
 function executor() {
   return async (acc, context) => {
     async function executeAnalyser(partialResult: MultiAnalyserResult): Promise<AnalyserResult> {
+      console.log(`Analyser: ${JSON.stringify({name: context.analyser.name, repo: context.analyser.repository.repo})}`)
       const {analyserDefinition, analyser} = context as AnalyserContext
       return analyser.conditional(partialResult).scan(analyserDefinition)
     }
